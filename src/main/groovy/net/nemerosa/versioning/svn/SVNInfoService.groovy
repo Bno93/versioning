@@ -92,15 +92,14 @@ class SVNInfoService implements SCMInfoService {
     }
 
     static String parseBranch(String url) {
-        if (url ==~ /.*\/trunk$/) {
+        def trunk = (url =~ /.*\/trunk/)
+        def branches = (url =~ /.*\/branches\/([^\/]+)/)
+        if (trunk.find()) {
             'trunk'
+        } else if (branches.find()) {
+            branches.group(1)
         } else {
-            def m = url =~ /.*\/branches\/([^\/]+)$/
-            if (m.matches()) {
-                m.group(1)
-            } else {
-                throw new SVNInfoURLException(url)
-            }
+            throw new SVNInfoURLException(url)
         }
     }
 
